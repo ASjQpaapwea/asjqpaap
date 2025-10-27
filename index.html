@@ -1,1 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASJQ服务器 - 创意无边界</title>
+    <style>
+        /* 基础样式 - 暗黑风基调 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
 
+        /* 背景装饰 */
+        .bg-decoration {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(30,30,30,0.2) 0%, rgba(10,10,10,0) 70%);
+            z-index: 0;
+            pointer-events: none;
+            transition: transform 0.5s ease;
+        }
+        
+        .bg-top {
+            top: -400px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .bg-bottom {
+            bottom: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* 容器设置 - 支持滑动 */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 标题与 banner 区域 */
+        .header {
+            text-align: center;
+            margin-bottom: 80px;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .header:hover {
+            transform: translateY(-10px);
+            background-color: rgba(30, 30, 30, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 30px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+        
+        /* 适配 1024*248 比例的图片容器 */
+        .banner-image {
+            width: 100%;
+            max-width: 1024px;
+            height: auto;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 0 auto 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.5s ease;
+        }
+        
+        .banner-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .banner-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            /* 保持 1024:248 比例（约4.13:1） */
+            aspect-ratio: 1024 / 248;
+            background-color: #1a1a1a;
+        }
+        
+        /* 宣传卡片容器 */
+        .promo-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 80px;
+            margin-bottom: 120px;
+        }
+        
+        /* 宣传卡片样式 */
+        .promo-card {
+            background-color: rgba(20, 20, 20, 0.6);
+            border-radius: 16px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(50, 50, 50, 0.3);
+            transform: translateY(20px);
+            opacity: 0.9;
+        }
+        
+        .promo-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background-color: rgba(25, 25, 25, 0.8);
+            border-color: rgba(70, 70, 70, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .promo-card .promo-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            display: inline-block;
+            transition: transform 0.5s ease;
+        }
+        
+        .promo-card:hover .promo-emoji {
+            transform: rotate(10deg) scale(1.2);
+        }
+        
+        .promo-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+        
+        .promo-card:hover h2 {
+            color: #4dd0e1;
+        }
+        
+        .promo-card p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            transition: color 0.3s ease;
+        }
+        
+        .promo-card:hover p {
+            color: #f0f0f0;
+        }
+        
+        .mod-highlight {
+            color: #4dd0e1;
+            font-weight: 500;
+        }
+        
+        .福利高亮 {
+            color: #ffd700;
+            font-weight: 500;
+        }
+        
+        /* 服务器宗旨区域 */
+        .server-principle {
+            background-color: rgba(20, 20, 20, 0.6);
+            border-radius: 16px;
+            padding: 50px;
+            margin-bottom: 120px;
+            border: 1px solid rgba(50, 50, 50, 0.3);
+            transition: all 0.4s ease;
+        }
+        
+        .server-principle:hover {
+            background-color: rgba(25, 25, 25, 0.8);
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .server-principle h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #ffffff;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+        
+        .server-principle:hover h2 {
+            color: #4dd0e1;
+        }
+        
+        .principle-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            padding-left: 20px;
+            border-left: 3px solid #4dd0e1;
+        }
+        
+        .forbidden {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+        
+        /* 投稿区域 */
+        .submission-area {
+            background-color: rgba(20, 20, 20, 0.6);
+            border-radius: 16px;
+            padding: 50px;
+            margin-bottom: 120px;
+            text-align: center;
+            border: 1px solid rgba(50, 50, 50, 0.3);
+            transition: all 0.4s ease;
+        }
+        
+        .submission-area:hover {
+            background-color: rgba(25, 25, 25, 0.8);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .submission-area h2 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+        
+        .submission-area:hover h2 {
+            color: #4dd0e1;
+        }
+        
+        .submission-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+        }
+        
+        .email-link {
+            display: inline-flex;
+            align-items: center;
+            color: #4dd0e1;
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 12px 24px;
+            border: 1px solid #4dd0e1;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .email-link:hover {
+            background-color: #4dd0e1;
+            color: #0a0a0a;
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(77, 208, 225, 0.2);
+        }
+        
+        .email-link i {
+            margin-right: 10px;
+        }
+        
+        /* 增强加群按钮视觉效果 */
+        .qq-group-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #2d8cf0; /* QQ蓝主色调 */
+            color: #ffffff;
+            text-decoration: none;
+            padding: 18px 40px;
+            border-radius: 36px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            font-size: 1.3rem;
+            box-shadow: 0 8px 25px rgba(45, 140, 240, 0.3);
+            margin: 60px auto 80px;
+            display: table;
+            min-width: 300px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .qq-group-btn:hover {
+            background-color: #409eff;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(45, 140, 240, 0.5);
+        }
+        
+        .qq-group-btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .qq-group-btn i {
+            margin-right: 15px;
+            font-size: 1.6em;
+        }
+        
+        /* 底部动画区域 */
+        .animation-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px 100px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Logo样式与动画 */
+        .logo-wrapper {
+            opacity: 0;
+            transform: translateY(80px) scale(0.8);
+            animation: logoRise 1s ease forwards 0.5s;
+        }
+        
+        .logo-wrapper img {
+            width: auto ;
+            height: auto;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            background-color: #1a1a1a;
+            padding: 20px;
+            transition: transform 0.5s ease;
+        }
+        
+        .logo-wrapper img:hover {
+            transform: scale(1.15) rotate(5deg);
+        }
+        
+        /* 增大标语并强化动画 */
+        .slogan {
+            margin-top: 40px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            opacity: 0;
+            transform: translateY(80px) scale(0.9);
+            animation: sloganRise 1s ease forwards 1.2s;
+            letter-spacing: 0.08em;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        /* 页脚信息 */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        footer:hover {
+            opacity: 1;
+        }
+        
+        /* 增强动画效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes logoRise {
+            from {
+                opacity: 0;
+                transform: translateY(80px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes sloganRise {
+            from {
+                opacity: 0;
+                transform: translateY(80px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* 滚动动画类 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .promo-card, .server-principle, .submission-area {
+                padding: 30px;
+            }
+            
+            .promo-card h2, .server-principle h2, .submission-area h2 {
+                font-size: 1.6rem;
+            }
+            
+            .logo-wrapper img {
+                width: 130px;
+                height: 130px;
+            }
+            
+            .slogan {
+                font-size: 1.6rem;
+            }
+            
+            .qq-group-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                min-width: auto;
+                width: 90%;
+            }
+            
+            .email-link {
+                font-size: 1rem;
+                padding: 10px 20px;
+                width: 90%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .slogan {
+                font-size: 1.4rem;
+            }
+            
+            .logo-wrapper img {
+                width: 110px;
+                height: 110px;
+            }
+        }
+    </style>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decoration bg-top"></div>
+    <div class="bg-decoration bg-bottom"></div>
+
+    <div class="container">
+        <!-- 标题区域 -->
+        <div class="header">
+            <h1>ASJQ服务器<br>创意无边界</h1>
+            
+            <!-- 适配 1024*248 比例的图片 -->
+            <div class="banner-image scroll-animate">
+                <img src="logo.png" alt="ASJQ服务器宣传图">
+            </div>
+        </div>
+        
+        <!-- 宣传卡片区域 -->
+        <div class="promo-cards">
+            <!-- 交通模组卡片 -->
+            <div class="promo-card scroll-animate">
+                <span class="promo-emoji">🚇</span>
+                <h2>便捷交通系统</h2>
+                <p>
+                    <span class="mod-highlight">mtr模组</span>、<span class="mod-highlight">汽车模组</span>带来更好的游戏体验，<br>
+                    帮助你快速到达任何地点，不再为长途跋涉烦恼，<br>
+                    让探索变得轻松愉快，快速抵达目的地。
+                </p>
+            </div>
+            
+            <!-- 城市住房卡片 -->
+            <div class="promo-card scroll-animate">
+                <span class="promo-emoji">🏙️</span>
+                <h2>温馨居住环境</h2>
+                <p>
+                    高楼耸立的城市，让你不再风餐露宿，<br>
+                    轻松拥有属于自己的温馨家园。<br>
+                    <span class="福利高亮">新玩家晚间免费赠送一套房子</span>，即刻开启舒适生活。
+                </p>
+            </div>
+        </div>
+        
+        <!-- 服务器宗旨区域 -->
+        <div class="server-principle scroll-animate">
+            <h2>服务器宗旨</h2>
+            <div class="principle-content">
+                <p>允许所有建筑创作（除包含<span class="forbidden">暴力、血腥、色情、赌博、毒品</span>以及不符合国家法律规定的主题）。</p>
+                <p>我们尊重每一位玩家的创意与想法，致力于打造自由开放的创作环境。</p>
+            </div>
+        </div>
+        
+        <!-- 投稿区域 -->
+        <div class="submission-area scroll-animate">
+            <h2>创意投稿</h2>
+            <p class="submission-text">
+                任何创意想法，都可以随意投稿！<br>
+                想让我们采纳你宝贵的建议吗？<br>
+                就快来投稿吧！
+            </p>
+            <a href="mailto:asjqsever@yeah.net" class="email-link">
+                <i class="fas fa-envelope"></i>
+                asjqsever@yeah.net
+            </a>
+        </div>
+        
+        <!-- 增强视觉效果的QQ群聊入口 -->
+        <a href="https://qm.qq.com/q/EA2MOVwbOE" target="_blank" class="qq-group-btn scroll-animate">
+            <i class="fab fa-qq"></i>
+            加入【ASJQ的服务器】QQ群聊
+        </a>
+    </div>
+    
+    <!-- 底部动画区域 -->
+    <div class="animation-container">
+        <div class="logo-wrapper">
+            <img src="logo.png" alt="ASJQ服务器标志">
+        </div>
+        <div class="slogan">创意至上 管理为下</div>
+    </div>
+    
+    <footer>
+        <p>© 2023 ASJQ服务器 - 创意无边界</p>
+    </footer>
+
+    <script>
+        // 图片加载失败处理
+        const logoImg = document.querySelector('.logo-wrapper img');
+        logoImg.onerror = function() {
+            this.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzFhMWE xYSIvPjxwYXRoIGQ9Ik01MCAyMUw3OSA0MEw3OSA2MEw1MCA3OUwyMSA2MEwyMSA0MEw1MCAyMVoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=';
+            this.alt = 'ASJQ标志';
+        };
+
+        // banner图片加载失败处理
+        const bannerImg = document.querySelector('.banner-image img');
+        bannerImg.onerror = function() {
+            this.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjI0OCIgdmlld0JveD0iMCAwIDEwMjQgMjQ4Ij48cmVjdCB3aWR0aD0iMTAyNCIgaGVpZ2h0PSIyNDgiIGZpbGw9IiMxYTFhMWEiLz48cGF0aCBkPSJNMjAwIDEyNEg4MjRjMTcuNyAwIDMwIDEyLjMgMzAgMzB2MjRjMCAxNy43LTEyLjMgMzAtMzAgMzBIMjAwYy0xNy43IDAtMzAtMTIuMy0zMC0zMlYxNTRjMC0xNy43IDEyLjMtMzAgMzAtMzB6IiBmaWxsPSIjZmZmIi8+PC9zdmc+';
+            this.alt = 'ASJQ服务器宣传';
+        };
+
+        // 滚动动画效果
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.scroll-animate');
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 100;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // 背景视差效果
+        function handleParallax() {
+            const scrollY = window.scrollY;
+            const bgTop = document.querySelector('.bg-top');
+            const bgBottom = document.querySelector('.bg-bottom');
+            
+            if (bgTop && bgBottom) {
+                bgTop.style.transform = `translateX(-50%) translateY(${scrollY * 0.1}px)`;
+                bgBottom.style.transform = `translateX(-50%) translateY(-${scrollY * 0.05}px)`;
+            }
+        }
+
+        // 初始化事件监听
+        window.addEventListener('scroll', () => {
+            handleScrollAnimation();
+            handleParallax();
+        });
+
+        // 初始加载时触发一次
+        window.addEventListener('load', () => {
+            handleScrollAnimation();
+            handleParallax();
+        });
+    </script>
+</body>
+</html>
